@@ -788,12 +788,11 @@ class SystemMonitor:
                   font=('Arial', 14, 'bold'), foreground='#3498db').pack(anchor='w', pady=(0, 15))
 
         dev_info = """
-    **Lowinolo** - опытный разработчик с фокусом на создании 
-    производительных и удобных системных утилит.
+    **Enderiarti** 
 
     📧 **Контакты:**
     • Email: dimakokulov3@gmail.com
-    • GitHub: github.com/Lowinolo
+    • GitHub: github.com/Enderiarti
     • Telegram: @Diforo4ka
 
     🌐 **Социальные сети:**
@@ -807,7 +806,7 @@ class SystemMonitor:
         social_frame.pack(fill='x', pady=(0, 15))
 
         social_buttons = [
-            ("GitHub", "https://github.com/Lowinolo", "#6cc644"),
+            ("GitHub", "https://github.com/Enderiarti", "#6cc644"),
             ("Telegram", "https://t.me/lowinolo", "#0088cc")
           #  ("Discord", "https://discord.gg/lowinolo", "#5865f2")
         ]
@@ -828,7 +827,7 @@ class SystemMonitor:
         license_text = """
     **MIT License**
 
-    Copyright (c) 2025 Lowinolo
+    Copyright (c) 2025 Enderiarti
 
     Разрешается бесплатное использование, копирование, модификация, объединение, 
     публикация, распространение, сублицензирование и/или продажа копий Программного 
@@ -856,9 +855,9 @@ class SystemMonitor:
         action_frame.pack(fill='x', pady=(0, 20))
 
         actions = [
-            ("📖 Документация", "https://github.com/Lowinolo/system-guardian/docs", "#27ae60"),
-            ("🐛 Сообщить об ошибке", "https://github.com/Lowinolo/system-guardian/issues", "#e74c3c"),
-            ("⭐ Оценить на GitHub", "https://github.com/Lowinolo/system-guardian/stargazers", "#f39c12"),
+            ("📖 Документация", "https://github.com/Enderiarti/system-monitoring-system", "#27ae60"),
+            ("🐛 Сообщить об ошибке", "https://github.com/Enderiarti/system-monitoring-system", "#e74c3c"),
+            ("⭐ Оценить на GitHub", "https://github.com/Enderiarti/system-monitoring-system/stargazers", "#f39c12"),
             ("🔄 Проверить обновления", self.check_updates, "#3498db"),
             ("📦 Экспорт отчетов", self.export_reports, "#9b59b6"),
             ("⚙️ Настройки программы", self.open_settings, "#34495e")
