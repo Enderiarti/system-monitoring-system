@@ -23,14 +23,10 @@ class SystemMonitor:
         self.root.title("🚀 System Monitoring Tool v1.0.0")
         self.root.geometry("1400x900")
 
-        # Загрузка настроек
         self.settings = self.load_settings()
-
-        # Тема приложения
         self.theme_mode = self.settings.get('theme', 'dark')
         self.button_style = self.settings.get('button_style', 'modern')
 
-        # Цветовые схемы
         self.themes = {
             'dark': {
                 'bg': '#2c3e50',
@@ -50,7 +46,6 @@ class SystemMonitor:
             }
         }
 
-        # Стили кнопок
         self.button_styles = {
             'modern': {'relief': 'flat', 'borderwidth': 2},
             'classic': {'relief': 'raised', 'borderwidth': 4},
@@ -58,7 +53,6 @@ class SystemMonitor:
         }
 
         self.current_theme = self.themes[self.theme_mode]
-
         self.root.configure(bg=self.current_theme['bg'])
         self.setup_styles()
 
@@ -74,7 +68,6 @@ class SystemMonitor:
         self.update_thread.start()
 
     def load_settings(self):
-        """Загрузка настроек из файла"""
         settings_file = Path("system_monitor_settings.json")
         if settings_file.exists():
             try:
@@ -85,7 +78,6 @@ class SystemMonitor:
         return {}
 
     def save_settings(self):
-        """Сохранение настроек в файл"""
         settings = {
             'theme': self.theme_mode,
             'button_style': self.button_style
@@ -94,11 +86,9 @@ class SystemMonitor:
             json.dump(settings, f, indent=4)
 
     def setup_styles(self):
-        """Настройка стилей"""
         self.style = ttk.Style()
         self.style.theme_use('clam')
 
-        # Конфигурация стилей для текущей темы
         self.style.configure('TFrame', background=self.current_theme['bg'])
         self.style.configure('TLabel', background=self.current_theme['bg'],
                              foreground=self.current_theme['text'])
@@ -111,135 +101,89 @@ class SystemMonitor:
         self.style.configure('Card.TFrame', background=self.current_theme['card'],
                              relief='raised', borderwidth=1)
 
-        # Стиль для вкладок
-        self.style.configure('TNotebook', background=self.current_theme['bg'])
-        self.style.configure('TNotebook.Tab', background=self.current_theme['card'],
-                             foreground=self.current_theme['text'], padding=[15, 5])
-        self.style.map('TNotebook.Tab', background=[('selected', self.current_theme['primary'])])
-
-    def configure_styles(self):
-        """Настройка стилей"""
-        self.style = ttk.Style()
-        self.style.theme_use('clam')
-
-        # Конфигурация стилей для текущей темы
-        self.style.configure('TFrame', background=self.current_theme['bg'])
-        self.style.configure('TLabel', background=self.current_theme['bg'],
-                             foreground=self.current_theme['text'])
-        self.style.configure('TButton', background=self.current_theme['primary'],
-                             foreground=self.current_theme['text'], **self.button_styles[self.button_style])
-        self.style.configure('Header.TLabel', font=('Arial', 14, 'bold'),
-                             foreground=self.current_theme['primary'])
-        self.style.configure('Title.TLabel', font=('Arial', 18, 'bold'),
-                             foreground=self.current_theme['secondary'])
-        self.style.configure('Card.TFrame', background=self.current_theme['card'],
-                             relief='raised', borderwidth=1)
-
-        # Стиль для вкладок
         self.style.configure('TNotebook', background=self.current_theme['bg'])
         self.style.configure('TNotebook.Tab', background=self.current_theme['card'],
                              foreground=self.current_theme['text'], padding=[15, 5])
         self.style.map('TNotebook.Tab', background=[('selected', self.current_theme['primary'])])
 
     def setup_ui(self):
-        # Создаем меню
         self.setup_menu()
 
-        # Создаем notebook для вкладок
         notebook = ttk.Notebook(self.root)
         notebook.pack(fill='both', expand=True, padx=10, pady=10)
 
-        # Вкладка мониторинга
         monitor_frame = ttk.Frame(notebook)
         notebook.add(monitor_frame, text="📊 Мониторинг")
         self.setup_monitor_tab(monitor_frame)
 
-        # Вкладка процессов
         process_frame = ttk.Frame(notebook)
         notebook.add(process_frame, text="⚙️ Процессы")
         self.setup_process_tab(process_frame)
 
-        # Вкладка системы
         system_frame = ttk.Frame(notebook)
         notebook.add(system_frame, text="💻 Система")
         self.setup_system_tab(system_frame)
 
-        # Вкладка сети
         network_frame = ttk.Frame(notebook)
         notebook.add(network_frame, text="🌐 Сеть")
         self.setup_network_tab(network_frame)
 
-        # Вкладка автозагрузки
         startup_frame = ttk.Frame(notebook)
         notebook.add(startup_frame, text="🚀 Автозагрузка")
         self.setup_startup_tab(startup_frame)
 
-        # Вкладка очистки
         clean_frame = ttk.Frame(notebook)
         notebook.add(clean_frame, text="🧹 Очистка")
         self.setup_clean_tab(clean_frame)
 
-        # Вкладка "О программе"
         about_frame = ttk.Frame(notebook)
         notebook.add(about_frame, text="ℹ️ О программе")
         self.setup_about_tab(about_frame)
 
-        # Вкладка настроек
         settings_frame = ttk.Frame(notebook)
         notebook.add(settings_frame, text="⚙️ Настройки")
         self.setup_settings_tab(settings_frame)
 
-        # Статус бар
         self.status_var = tk.StringVar()
         status_bar = ttk.Label(self.root, textvariable=self.status_var, relief='sunken', padding=5)
         status_bar.pack(side='bottom', fill='x')
 
         self.status_var.set("🟢 Готов к работе")
-
-        # Панель быстрого доступа
         self.setup_quick_access()
 
     def setup_menu(self):
-        """Создание меню приложения"""
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
 
-        # Меню Файл
         file_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Файл", menu=file_menu)
         file_menu.add_command(label="Экспорт отчета", command=self.export_reports)
         file_menu.add_separator()
         file_menu.add_command(label="Выход", command=self.root.quit)
 
-        # Меню Вид
         view_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Вид", menu=view_menu)
 
-        # Подменю Темы
         theme_menu = tk.Menu(view_menu, tearoff=0)
         view_menu.add_cascade(label="Тема", menu=theme_menu)
         theme_menu.add_command(label="Темная", command=lambda: self.change_theme('dark'))
         theme_menu.add_command(label="Светлая", command=lambda: self.change_theme('light'))
 
-        # Подменю Стиль кнопок
         style_menu = tk.Menu(view_menu, tearoff=0)
         view_menu.add_cascade(label="Стиль кнопок", menu=style_menu)
         style_menu.add_command(label="Современный", command=lambda: self.change_button_style('modern'))
         style_menu.add_command(label="Классический", command=lambda: self.change_button_style('classic'))
         style_menu.add_command(label="Минималистичный", command=lambda: self.change_button_style('minimal'))
 
-        # Меню Помощь
         help_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Помощь", menu=help_menu)
         help_menu.add_command(label="О программе", command=self.show_about)
         help_menu.add_command(label="Проверить обновления", command=self.check_updates)
 
     def setup_settings_tab(self, parent):
-        """Вкладка настроек"""
         main_frame = ttk.Frame(parent)
         main_frame.pack(fill='both', expand=True, padx=20, pady=20)
 
-        # Настройки темы
         theme_frame = ttk.LabelFrame(main_frame, text="🎨 Настройки темы", padding=15)
         theme_frame.pack(fill='x', pady=(0, 15))
 
@@ -255,7 +199,6 @@ class SystemMonitor:
         ttk.Radiobutton(theme_frame_inner, text="☀️ Светлая тема", variable=theme_var,
                         value='light', command=lambda: self.change_theme('light')).pack(side='left', padx=10)
 
-        # Настройки стиля кнопок
         style_frame = ttk.LabelFrame(main_frame, text="🔘 Стиль кнопок", padding=15)
         style_frame.pack(fill='x', pady=(0, 15))
 
@@ -273,7 +216,6 @@ class SystemMonitor:
         ttk.Radiobutton(style_frame_inner, text="⚪ Минималистичный", variable=style_var,
                         value='minimal', command=lambda: self.change_button_style('minimal')).pack(side='left', padx=10)
 
-        # Демонстрация стилей
         demo_frame = ttk.LabelFrame(main_frame, text="👀 Предпросмотр", padding=15)
         demo_frame.pack(fill='x', pady=(0, 15))
 
@@ -287,26 +229,21 @@ class SystemMonitor:
             btn = ttk.Button(demo_buttons, text=text, width=15)
             btn.pack(side='left', padx=5)
 
-        # Дополнительные настройки
         advanced_frame = ttk.LabelFrame(main_frame, text="⚙️ Дополнительно", padding=15)
         advanced_frame.pack(fill='x', pady=(0, 15))
 
-        # Автозапуск
         autostart_var = tk.BooleanVar(value=False)
         ttk.Checkbutton(advanced_frame, text="Запускать при старте системы",
                         variable=autostart_var).pack(anchor='w', pady=2)
 
-        # Уведомления
         notifications_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(advanced_frame, text="Включить уведомления",
                         variable=notifications_var).pack(anchor='w', pady=2)
 
-        # Минималистичный режим
         minimal_var = tk.BooleanVar(value=False)
         ttk.Checkbutton(advanced_frame, text="Минималистичный режим",
                         variable=minimal_var).pack(anchor='w', pady=2)
 
-        # Кнопки управления настройками
         control_frame = ttk.Frame(main_frame)
         control_frame.pack(fill='x', pady=15)
 
@@ -318,32 +255,24 @@ class SystemMonitor:
                    command=self.apply_settings, width=20).pack(side='right', padx=5)
 
     def change_theme(self, theme):
-        """Изменение темы"""
         self.theme_mode = theme
         self.current_theme = self.themes[theme]
         self.setup_styles()
         self.update_ui_colors()
 
     def change_button_style(self, style):
-        """Изменение стиля кнопок"""
         self.button_style = style
         self.setup_styles()
         self.save_settings()
 
     def update_ui_colors(self):
-        """Обновление цветов интерфейса"""
-        # Обновляем цвет фона
         self.root.configure(bg=self.current_theme['bg'])
-
-        # Обновляем все дочерние виджеты
         for widget in self.root.winfo_children():
             if isinstance(widget, ttk.Frame):
                 widget.configure(style='TFrame')
-
         self.save_settings()
 
     def reset_settings(self):
-        """Сброс настроек к значениям по умолчанию"""
         if messagebox.askyesno("Сброс настроек", "Вы уверены, что хотите сбросить все настройки?"):
             self.theme_mode = 'dark'
             self.button_style = 'modern'
@@ -353,18 +282,15 @@ class SystemMonitor:
             messagebox.showinfo("Успех", "Настройки сброшены к значениям по умолчанию")
 
     def apply_settings(self):
-        """Применение настроек"""
         self.setup_styles()
         self.update_ui_colors()
         messagebox.showinfo("Успех", "Настройки применены")
 
     def setup_quick_access(self):
-        """Панель быстрого доступа с улучшенным дизайном"""
         quick_frame = ttk.Frame(self.root, height=50, style='Card.TFrame')
         quick_frame.pack(side='top', fill='x', padx=10, pady=5)
         quick_frame.pack_propagate(False)
 
-        # Стилизованные кнопки быстрого доступа
         actions = [
             ("🔄 Обновить все", self.update_all, self.current_theme['primary']),
             ("📊 CPU", lambda: self.show_resource("CPU"), "#e74c3c"),
@@ -375,26 +301,22 @@ class SystemMonitor:
         ]
 
         for text, command, color in actions:
-            # Создаем словарь стилей без relief, так как он уже задан явно
             style_params = self.button_styles[self.button_style].copy()
             if 'relief' in style_params:
                 del style_params['relief']
 
             btn = tk.Button(quick_frame, text=text, font=('Arial', 10, 'bold'),
                             bg=color, fg='white', relief='flat', cursor='hand2',
-                            command=command, **style_params)  # ИСПРАВЛЕНО ЗДЕСЬ
+                            command=command, **style_params)
             btn.pack(side='left', padx=3, ipadx=8, ipady=3)
 
     def setup_monitor_tab(self, parent):
-        # Основной фрейм для мониторинга
         main_frame = ttk.Frame(parent)
         main_frame.pack(fill='both', expand=True, padx=10, pady=10)
 
-        # Левая панель - графики
         left_frame = ttk.Frame(main_frame)
         left_frame.pack(side='left', fill='both', expand=True)
 
-        # Графики
         fig = Figure(figsize=(10, 8), dpi=100, facecolor='#2c3e50')
         fig.subplots_adjust(hspace=0.4, wspace=0.3)
 
@@ -404,7 +326,6 @@ class SystemMonitor:
         self.ax_net = fig.add_subplot(324)
         self.ax_temp = fig.add_subplot(325)
 
-        # Настройка цветов графиков
         for ax in [self.ax_cpu, self.ax_mem, self.ax_disk, self.ax_net, self.ax_temp]:
             ax.set_facecolor('#34495e')
             ax.tick_params(colors='white')
@@ -417,7 +338,6 @@ class SystemMonitor:
         self.canvas = FigureCanvasTkAgg(fig, left_frame)
         self.canvas.get_tk_widget().pack(fill='both', expand=True)
 
-        # Правая панель - показатели в реальном времени
         right_frame = ttk.Frame(main_frame, width=250)
         right_frame.pack(side='right', fill='y', padx=(10, 0))
         right_frame.pack_propagate(False)
@@ -425,7 +345,6 @@ class SystemMonitor:
         ttk.Label(right_frame, text="📈 Показатели в реальном времени",
                   style='Header.TLabel').pack(pady=(0, 15))
 
-        # Карточки с показателями
         self.cpu_var = tk.StringVar(value="Загрузка CPU: 0%")
         self.mem_var = tk.StringVar(value="Исп. памяти: 0%")
         self.disk_var = tk.StringVar(value="Исп. диска: 0%")
@@ -439,11 +358,9 @@ class SystemMonitor:
         self.create_metric_card(right_frame, "🌡️ Температура", self.temp_var)
 
     def create_metric_card(self, parent, title, variable):
-        """Создание карточки с метрикой с улучшенным дизайном"""
         card = ttk.Frame(parent, style='Card.TFrame', padding=12)
         card.pack(fill='x', pady=4)
 
-        # Заголовок с иконкой
         header_frame = ttk.Frame(card)
         header_frame.pack(fill='x', pady=(0, 8))
 
@@ -451,28 +368,15 @@ class SystemMonitor:
                   foreground=self.current_theme['primary'],
                   background=self.current_theme['card']).pack(side='left')
 
-        # Значение метрики
         value_label = ttk.Label(card, textvariable=variable, font=('Arial', 13, 'bold'),
                                 foreground=self.current_theme['secondary'],
                                 background=self.current_theme['card'])
         value_label.pack(anchor='w')
 
-        # Добавляем эффект при наведении
-        def on_enter(e):
-            card.configure(style='Card.TFrame')
-
-        def on_leave(e):
-            card.configure(style='Card.TFrame')
-
-        card.bind("<Enter>", on_enter)  # ИСПРАВЛЕНО: убрано лишнее
-        card.bind("<Leave>", on_leave)  # ИСПРАВЛЕНО: убрано лишнее
-
     def setup_process_tab(self, parent):
-        # Основной фрейм для процессов
         main_frame = ttk.Frame(parent)
         main_frame.pack(fill='both', expand=True, padx=10, pady=10)
 
-        # Панель поиска и фильтров
         filter_frame = ttk.Frame(main_frame)
         filter_frame.pack(fill='x', pady=(0, 10))
 
@@ -487,11 +391,9 @@ class SystemMonitor:
         ttk.Button(filter_frame, text="📊 Детали", command=self.show_process_details).pack(side='left', padx=5)
         ttk.Button(filter_frame, text="🧹 Очистить", command=self.clear_process_filter).pack(side='left', padx=5)
 
-        # Таблица процессов
         columns = ('pid', 'name', 'cpu', 'memory', 'status', 'user')
         self.tree = ttk.Treeview(main_frame, columns=columns, show='headings', height=20)
 
-        # Заголовки
         self.tree.heading('pid', text='PID', command=lambda: self.sort_treeview('pid', False))
         self.tree.heading('name', text='Имя процесса', command=lambda: self.sort_treeview('name', False))
         self.tree.heading('cpu', text='CPU %', command=lambda: self.sort_treeview('cpu', False))
@@ -499,7 +401,6 @@ class SystemMonitor:
         self.tree.heading('status', text='Статус', command=lambda: self.sort_treeview('status', False))
         self.tree.heading('user', text='Пользователь', command=lambda: self.sort_treeview('user', False))
 
-        # Колонки
         self.tree.column('pid', width=80, anchor='center')
         self.tree.column('name', width=200)
         self.tree.column('cpu', width=80, anchor='center')
@@ -507,17 +408,13 @@ class SystemMonitor:
         self.tree.column('status', width=100, anchor='center')
         self.tree.column('user', width=120)
 
-        # Полоса прокрутки
         scrollbar = ttk.Scrollbar(main_frame, orient='vertical', command=self.tree.yview)
         self.tree.configure(yscrollcommand=scrollbar.set)
 
         self.tree.pack(side='left', fill='both', expand=True)
         scrollbar.pack(side='right', fill='y')
 
-        # Контекстное меню
         self.setup_treeview_context_menu()
-
-        # Обновляем процессы при открытии вкладки
         self.update_processes()
 
     def setup_treeview_context_menu(self):
@@ -536,15 +433,12 @@ class SystemMonitor:
             self.context_menu.post(event.x_root, event.y_root)
 
     def setup_system_tab(self, parent):
-        # Основной фрейм для системной информации
         main_frame = ttk.Frame(parent)
         main_frame.pack(fill='both', expand=True, padx=10, pady=10)
 
-        # Создаем Notebook для организации информации
         sys_notebook = ttk.Notebook(main_frame)
         sys_notebook.pack(fill='both', expand=True)
 
-        # Вкладка общей информации
         general_frame = ttk.Frame(sys_notebook)
         sys_notebook.add(general_frame, text="Общая информация")
 
@@ -556,7 +450,6 @@ class SystemMonitor:
         general_info.insert('1.0', info)
         general_info.config(state='disabled')
 
-        # Вкладка аппаратного обеспечения
         hardware_frame = ttk.Frame(sys_notebook)
         sys_notebook.add(hardware_frame, text="Аппаратное обеспечение")
 
@@ -572,7 +465,6 @@ class SystemMonitor:
         main_frame = ttk.Frame(parent)
         main_frame.pack(fill='both', expand=True, padx=10, pady=10)
 
-        # Таблица сетевых соединений
         columns = ('proto', 'local', 'remote', 'status', 'pid')
         self.net_tree = ttk.Treeview(main_frame, columns=columns, show='headings', height=20)
 
@@ -594,20 +486,17 @@ class SystemMonitor:
         self.net_tree.pack(side='left', fill='both', expand=True)
         scrollbar.pack(side='right', fill='y')
 
-        # Кнопка обновления
         btn_frame = ttk.Frame(main_frame)
         btn_frame.pack(fill='x', pady=(10, 0))
 
         ttk.Button(btn_frame, text="🔄 Обновить", command=self.update_network_connections).pack(side='left')
 
-        # Обновляем соединения при открытии вкладки
         self.update_network_connections()
 
     def setup_startup_tab(self, parent):
         main_frame = ttk.Frame(parent)
         main_frame.pack(fill='both', expand=True, padx=10, pady=10)
 
-        # Таблица автозагрузки
         columns = ('name', 'path', 'status')
         self.startup_tree = ttk.Treeview(main_frame, columns=columns, show='headings', height=20)
 
@@ -625,7 +514,6 @@ class SystemMonitor:
         self.startup_tree.pack(side='left', fill='both', expand=True)
         scrollbar.pack(side='right', fill='y')
 
-        # Кнопки управления
         btn_frame = ttk.Frame(main_frame)
         btn_frame.pack(fill='x', pady=(10, 0))
 
@@ -633,21 +521,18 @@ class SystemMonitor:
         ttk.Button(btn_frame, text="✅ Включить", command=self.enable_startup).pack(side='left', padx=5)
         ttk.Button(btn_frame, text="❌ Отключить", command=self.disable_startup).pack(side='left', padx=5)
 
-        # Обновляем автозагрузку при открытии вкладки
         self.update_startup_programs()
 
     def setup_clean_tab(self, parent):
         main_frame = ttk.Frame(parent)
         main_frame.pack(fill='both', expand=True, padx=10, pady=10)
 
-        # Левая панель - инструменты очистки
         left_frame = ttk.Frame(main_frame, width=300)
         left_frame.pack(side='left', fill='y', padx=(0, 10))
         left_frame.pack_propagate(False)
 
         ttk.Label(left_frame, text="🧹 Инструменты очистки", style='Header.TLabel').pack(pady=(0, 15))
 
-        # Кнопки очистки
         clean_actions = [
             ("🧽 Очистить кэш", self.clean_temp_files),
             ("🗑️ Очистить корзину", self.clean_recycle_bin),
@@ -660,7 +545,6 @@ class SystemMonitor:
             btn = ttk.Button(left_frame, text=text, command=command, width=25)
             btn.pack(pady=5)
 
-        # Правая панель - результаты очистки
         right_frame = ttk.Frame(main_frame)
         right_frame.pack(side='right', fill='both', expand=True)
 
@@ -673,12 +557,10 @@ class SystemMonitor:
         self.clean_result.config(state='disabled')
 
     def setup_about_tab(self, parent):
-        # Основной фрейм с прокруткой
         main_frame = ttk.Frame(parent)
         main_frame.pack(fill='both', expand=True, padx=20, pady=20)
 
-        # Создаем Canvas для прокрутки
-        canvas = tk.Canvas(main_frame, bg=self.current_theme['bg'], highlightthickness=0)  # ИСПРАВЛЕНО ЗДЕСЬ
+        canvas = tk.Canvas(main_frame, bg=self.current_theme['bg'], highlightthickness=0)
         scrollbar = ttk.Scrollbar(main_frame, orient='vertical', command=canvas.yview)
         scrollable_frame = ttk.Frame(canvas)
 
@@ -693,12 +575,9 @@ class SystemMonitor:
         canvas.pack(side='left', fill='both', expand=True)
         scrollbar.pack(side='right', fill='y')
 
-        # Остальной код метода остается без изменений...
-        # Заголовок с иконкой
         header_frame = ttk.Frame(scrollable_frame)
         header_frame.pack(fill='x', pady=(0, 20))
 
-        # Иконка приложения
         icon_label = ttk.Label(header_frame, text="🚀", font=('Arial', 48))
         icon_label.pack(side='left', padx=(0, 20))
 
@@ -712,51 +591,35 @@ class SystemMonitor:
         ttk.Label(title_frame, text=f"Версия 1.0.0 | Сборка {datetime.now().strftime('%Y%m%d')}",
                   font=('Arial', 10), foreground='#95a5a6').pack(anchor='w')
 
-        # Карточка с основной информацией
         info_card = ttk.Frame(scrollable_frame, style='Card.TFrame', padding=20)
         info_card.pack(fill='x', pady=(0, 20))
 
         info_text = """
-    **SSystem Monitoring Tool** - это комплексное решение для мониторинга и управления 
+    System Monitoring Tool - это комплексное решение для мониторинга и управления 
     системными ресурсами вашего компьютера. Программа сочетает в себе мощный 
     функционал и современный интерфейс для максимального удобства использования.
 
-    🎯 **Ключевые возможности:**
-    • 📊 Реальный мониторинг CPU, памяти, диска и сети
-    • ⚙️ Полный контроль над процессами и службами
-    • 🌡️ Мониторинг температуры компонентов
-    • 🌐 Анализ сетевых соединений
-    • 🚀 Управление автозагрузкой приложений
-    • 🧹 Интеллектуальная очистка системы
-    • 🎨 Современный адаптивный интерфейс
-    • 🔧 Поддержка Windows, Linux и macOS
-
-    🛡️ **Безопасность и конфиденциальность:**
-    • Все данные обрабатываются локально
-    • Отсутствие сбора личной информации
-    • Открытый исходный код
-    • Регулярные обновления безопасности
-
-    ⚙️ **Технологический стек:**
-    • Python 3.8+ - основной язык программирования
-    • Tkinter - современный графический интерфейс
-    • Psutil - низкоуровневый мониторинг системы
-    • Matplotlib - продвинутая визуализация данных
-    • GPUtil - мониторинг графических процессоров
-    """
+    Ключевые возможности:
+    • Реальный мониторинг CPU, памяти, диска и сети
+    • Полный контроль над процессами и службами
+    • Мониторинг температуры компонентов
+    • Анализ сетевых соединений
+    • Управление автозагрузкой приложений
+    • Интеллектуальная очистка системы
+    • Современный адаптивный интерфейс
+    • Поддержка Windows, Linux и macOS
+        """
 
         info_label = ttk.Label(info_card, text=info_text, font=('Arial', 11),
                                justify='left', background='#34495e', foreground='white')
         info_label.pack(anchor='w')
 
-        # Системная информация
         sys_info_card = ttk.Frame(scrollable_frame, style='Card.TFrame', padding=20)
         sys_info_card.pack(fill='x', pady=(0, 20))
 
         ttk.Label(sys_info_card, text="📋 Системная информация",
                   font=('Arial', 14, 'bold'), foreground='#3498db').pack(anchor='w', pady=(0, 15))
 
-        # Сетка с системной информацией
         sys_grid = ttk.Frame(sys_info_card)
         sys_grid.pack(fill='x')
 
@@ -780,7 +643,6 @@ class SystemMonitor:
             ttk.Label(sys_grid, text=value, font=('Arial', 10),
                       foreground='#ecf0f1').grid(row=row, column=col + 1, sticky='w', pady=2)
 
-        # Разработчик и контакты
         dev_card = ttk.Frame(scrollable_frame, style='Card.TFrame', padding=20)
         dev_card.pack(fill='x', pady=(0, 20))
 
@@ -788,27 +650,23 @@ class SystemMonitor:
                   font=('Arial', 14, 'bold'), foreground='#3498db').pack(anchor='w', pady=(0, 15))
 
         dev_info = """
-    **Enderiarti** 
+    Enderiarti 
 
-    📧 **Контакты:**
+    Контакты:
     • Email: dimakokulov3@gmail.com
     • GitHub: github.com/Enderiarti
     • Telegram: @Diforo4ka
-
-    🌐 **Социальные сети:**
-    """
+        """
 
         ttk.Label(dev_card, text=dev_info, font=('Arial', 11),
                   justify='left', background='#34495e', foreground='white').pack(anchor='w', pady=(0, 15))
 
-        # Кнопки социальных сетей
         social_frame = ttk.Frame(dev_card)
         social_frame.pack(fill='x', pady=(0, 15))
 
         social_buttons = [
             ("GitHub", "https://github.com/Enderiarti", "#6cc644"),
             ("Telegram", "https://t.me/lowinolo", "#0088cc")
-          #  ("Discord", "https://discord.gg/lowinolo", "#5865f2")
         ]
 
         for platform_name, url, color in social_buttons:
@@ -817,7 +675,6 @@ class SystemMonitor:
                             command=lambda u=url: webbrowser.open(u))
             btn.pack(side='left', padx=(0, 10), ipadx=10, ipady=5)
 
-        # Лицензия и права
         license_card = ttk.Frame(scrollable_frame, style='Card.TFrame', padding=20)
         license_card.pack(fill='x', pady=(0, 20))
 
@@ -825,7 +682,7 @@ class SystemMonitor:
                   font=('Arial', 14, 'bold'), foreground='#3498db').pack(anchor='w', pady=(0, 15))
 
         license_text = """
-    **MIT License**
+    MIT License
 
     Copyright (c) 2025 Enderiarti
 
@@ -836,21 +693,12 @@ class SystemMonitor:
 
     Указанное выше уведомление об авторском праве и данное уведомление о разрешении 
     должны быть включены во все копии или существенные части Программного обеспечения.
-
-    ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, 
-    ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ ГАРАНТИЯМИ 
-    ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ОПРЕДЕЛЕННОМУ НАЗНАЧЕНИЮ И НЕНАРУШЕНИЯ ПРАВ. 
-    НИ В КОЕМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО ИСКАМ О 
-    ВОЗМЕЩЕНИИ УЩЕРБА, УБЫТКОВ ИЛИ ИНЫХ ТРЕБОВАНИЙ ПО ДЕЙСТВУЮЩЕМУ ПРАВУ, ДОГОВОРУ 
-    ИЛИ ИНОМУ, ВОЗНИКШИМ ИЗ, ИМЕЮЩИМ ПРИЧИНОЙ ИЛИ СВЯЗАННЫМ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ 
-    ИЛИ ИСПОЛЬЗОВАНИЕМ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫМИ ДЕЙСТВИЯМИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.
-    """
+        """
 
         license_label = ttk.Label(license_card, text=license_text, font=('Arial', 10),
                                   justify='left', background='#34495e', foreground='#bdc3c7')
         license_label.pack(anchor='w')
 
-        # Кнопки действий
         action_frame = ttk.Frame(scrollable_frame)
         action_frame.pack(fill='x', pady=(0, 20))
 
@@ -878,7 +726,6 @@ class SystemMonitor:
             btn.grid(row=row, column=col, padx=5, pady=5, sticky='ew')
             action_frame.columnconfigure(col, weight=1)
 
-        # Статистика использования
         stats_card = ttk.Frame(scrollable_frame, style='Card.TFrame', padding=20)
         stats_card.pack(fill='x', pady=(0, 20))
 
@@ -886,16 +733,15 @@ class SystemMonitor:
                   font=('Arial', 14, 'bold'), foreground='#3498db').pack(anchor='w', pady=(0, 15))
 
         stats_text = f"""
-    • 🕐 Время работы: {time.strftime('%H:%M:%S', time.gmtime(time.time() - self.start_time))}
-    • 💾 Памяти использовано: {psutil.virtual_memory().used // 1024 // 1024} MB
-    • 🌐 Сетевой трафик: {(psutil.net_io_counters().bytes_sent + psutil.net_io_counters().bytes_recv) // 1024 // 1024} MB
-    • 🎯 Ошибок: 0
-    """
+    • Время работы: {time.strftime('%H:%M:%S', time.gmtime(time.time() - self.start_time))}
+    • Памяти использовано: {psutil.virtual_memory().used // 1024 // 1024} MB
+    • Сетевой трафик: {(psutil.net_io_counters().bytes_sent + psutil.net_io_counters().bytes_recv) // 1024 // 1024} MB
+    • Ошибок: 0
+        """
 
         ttk.Label(stats_card, text=stats_text, font=('Arial', 11),
                   justify='left', background='#34495e', foreground='white').pack(anchor='w')
 
-        # Футер
         footer_frame = ttk.Frame(scrollable_frame)
         footer_frame.pack(fill='x', pady=(20, 0))
 
@@ -903,16 +749,13 @@ class SystemMonitor:
         ttk.Label(footer_frame, text=footer_text, font=('Arial', 9),
                   foreground='#7f8c8d').pack(anchor='center')
 
-        # Добавляем время запуска для статистики
         self.start_time = time.time()
 
     def check_updates(self):
-        """Проверка обновлений"""
         messagebox.showinfo("Проверка обновлений",
                             "Проверяем наличие обновлений...\n\nВерсия 1.0.0 актуальна!")
 
     def export_reports(self):
-        """Экспорт отчетов"""
         try:
             filename = f"system_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
             with open(filename, 'w', encoding='utf-8') as f:
@@ -925,31 +768,26 @@ class SystemMonitor:
             messagebox.showerror("Ошибка", f"Не удалось экспортировать отчет: {e}")
 
     def open_settings(self):
-        """Открытие настроек программы"""
         messagebox.showinfo("Настройки", "Открываем настройки программы...")
 
     def update_data(self):
         while self.running:
             try:
-                # Обновляем графики
                 cpu_percent = psutil.cpu_percent()
                 mem_percent = psutil.virtual_memory().percent
                 disk_percent = psutil.disk_usage('/').percent
 
                 net_io = psutil.net_io_counters()
-                net_usage = (net_io.bytes_sent + net_io.bytes_recv) / 1024 / 1024  # MB
+                net_usage = (net_io.bytes_sent + net_io.bytes_recv) / 1024 / 1024
 
-                # Получаем температуру
                 temp = self.get_temperature()
 
-                # Добавляем данные в массивы
                 self.cpu_data.append(cpu_percent)
                 self.mem_data.append(mem_percent)
                 self.disk_data.append(disk_percent)
                 self.net_data.append(net_usage)
                 self.temp_data.append(temp)
 
-                # Ограничиваем данные для графиков
                 if len(self.cpu_data) > 50:
                     self.cpu_data = self.cpu_data[-50:]
                     self.mem_data = self.mem_data[-50:]
@@ -957,17 +795,14 @@ class SystemMonitor:
                     self.net_data = self.net_data[-50:]
                     self.temp_data = self.temp_data[-50:]
 
-                # Обновляем графики
                 self.update_charts()
 
-                # Обновляем показатели в реальном времени
                 self.cpu_var.set(f"Загрузка CPU: {cpu_percent}%")
                 self.mem_var.set(f"Исп. памяти: {mem_percent}%")
                 self.disk_var.set(f"Исп. диска: {disk_percent}%")
                 self.net_var.set(f"Сетевой трафик: {net_usage:.1f} MB")
                 self.temp_var.set(f"Температура: {temp}°C")
 
-                # Обновляем статус
                 self.status_var.set(
                     f"🟢 CPU: {cpu_percent}% | "
                     f"Память: {mem_percent}% | "
@@ -983,14 +818,12 @@ class SystemMonitor:
                 time.sleep(5)
 
     def update_charts(self):
-        # Очищаем графики
         self.ax_cpu.clear()
         self.ax_mem.clear()
         self.ax_disk.clear()
         self.ax_net.clear()
         self.ax_temp.clear()
 
-        # Настраиваем цвета
         for ax in [self.ax_cpu, self.ax_mem, self.ax_disk, self.ax_net, self.ax_temp]:
             ax.set_facecolor('#34495e')
             ax.tick_params(colors='white')
@@ -998,45 +831,37 @@ class SystemMonitor:
                 spine.set_color('#7f8c8d')
             ax.title.set_color('white')
 
-        # График CPU
         self.ax_cpu.plot(self.cpu_data, 'r-', linewidth=2)
         self.ax_cpu.set_title('Использование CPU (%)')
         self.ax_cpu.grid(True, color='#7f8c8d', linestyle='--', alpha=0.3)
         self.ax_cpu.set_ylim(0, 100)
 
-        # График памяти
         self.ax_mem.plot(self.mem_data, 'b-', linewidth=2)
         self.ax_mem.set_title('Использование памяти (%)')
         self.ax_mem.grid(True, color='#7f8c8d', linestyle='--', alpha=0.3)
         self.ax_mem.set_ylim(0, 100)
 
-        # График диска
         self.ax_disk.plot(self.disk_data, 'g-', linewidth=2)
         self.ax_disk.set_title('Использование диска (%)')
         self.ax_disk.grid(True, color='#7f8c8d', linestyle='--', alpha=0.3)
         self.ax_disk.set_ylim(0, 100)
 
-        # График сети
         self.ax_net.plot(self.net_data, 'm-', linewidth=2)
         self.ax_net.set_title('Сетевой трафик (MB)')
         self.ax_net.grid(True, color='#7f8c8d', linestyle='--', alpha=0.3)
 
-        # График температуры
         self.ax_temp.plot(self.temp_data, 'y-', linewidth=2)
         self.ax_temp.set_title('Температура (°C)')
         self.ax_temp.grid(True, color='#7f8c8d', linestyle='--', alpha=0.3)
 
-        # Обновляем canvas
         self.canvas.draw()
 
     def get_temperature(self):
         try:
-            # Пытаемся получить температуру GPU
             gpus = GPUtil.getGPUs()
             if gpus:
                 return int(gpus[0].temperature)
 
-            # Если GPU нет, пытаемся получить температуру CPU
             if hasattr(psutil, "sensors_temperatures"):
                 temps = psutil.sensors_temperatures()
                 if temps and 'coretemp' in temps:
@@ -1049,19 +874,16 @@ class SystemMonitor:
     def get_system_info(self):
         info = "=== ИНФОРМАЦИЯ О СИСТЕМЕ ===\n\n"
 
-        # Информация о системе
         info += f"Система: {platform.system()} {platform.release()}\n"
         info += f"Версия: {platform.version()}\n"
         info += f"Архитектура: {platform.architecture()[0]}\n"
         info += f"Имя компьютера: {platform.node()}\n\n"
 
-        # CPU информация
         info += "=== ПРОЦЕССОР ===\n"
         info += f"Процессор: {platform.processor()}\n"
         info += f"Ядер: {psutil.cpu_count()} (логических: {psutil.cpu_count(logical=True)})\n"
         info += f"Тактовая частота: {psutil.cpu_freq().current if psutil.cpu_freq() else 'N/A'} MHz\n\n"
 
-        # Память
         mem = psutil.virtual_memory()
         info += "=== ПАМЯТЬ ===\n"
         info += f"ОЗУ: {mem.total // 1024 // 1024} MB total\n"
@@ -1069,7 +891,6 @@ class SystemMonitor:
         info += f"Использовано: {mem.used // 1024 // 1024} MB\n"
         info += f"Процент использования: {mem.percent}%\n\n"
 
-        # Диски
         info += "=== ДИСКИ ===\n"
         for part in psutil.disk_partitions():
             try:
@@ -1084,7 +905,6 @@ class SystemMonitor:
         info = "=== АППАРАТНОЕ ОБЕСПЕЧЕНИЕ ===\n\n"
 
         try:
-            # Информация о GPU
             info += "=== ГРАФИЧЕСКИЙ ПРОЦЕССОР ===\n"
             try:
                 gpus = GPUtil.getGPUs()
@@ -1096,7 +916,6 @@ class SystemMonitor:
             except:
                 info += "Информация о GPU недоступна\n"
 
-            # Информация о мониторах
             info += "\n=== МОНИТОРЫ ===\n"
             try:
                 monitors = get_monitors()
@@ -1105,7 +924,6 @@ class SystemMonitor:
             except:
                 info += "Информация о мониторах недоступна\n"
 
-            # Информация о батарее
             info += "\n=== БАТАРЕЯ ===\n"
             try:
                 battery = psutil.sensors_battery()
@@ -1155,7 +973,6 @@ class SystemMonitor:
             else:
                 self.tree.item(item, tags=('no_match',))
 
-        # Показываем только совпадения
         for item in self.tree.get_children():
             if 'match' in self.tree.item(item)['tags']:
                 self.tree.reattach(item, '', 'end')
@@ -1166,23 +983,18 @@ class SystemMonitor:
             self.tree.reattach(item, '', 'end')
 
     def sort_treeview(self, column, reverse):
-        # Получаем все элементы
         items = [(self.tree.set(item, column), item) for item in self.tree.get_children('')]
 
-        # Преобразуем числовые значения
         try:
             items = [(float(item[0].replace('%', '').replace(' MB', '')), item[1]) for item in items]
         except:
             pass
 
-        # Сортируем
         items.sort(reverse=reverse)
 
-        # Переставляем элементы
         for index, (value, item) in enumerate(items):
             self.tree.move(item, '', index)
 
-        # Устанавливаем обратный порядок для следующего клика
         self.tree.heading(column, command=lambda: self.sort_treeview(column, not reverse))
 
     def kill_process(self):
@@ -1256,11 +1068,9 @@ CPU: {process.cpu_percent()}%
         for item in self.startup_tree.get_children():
             self.startup_tree.delete(item)
 
-        # Для Windows
         if os.name == 'nt':
             try:
                 import winreg
-                # Реестровые ключи автозагрузки
                 keys = [
                     (winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run"),
                     (winreg.HKEY_LOCAL_MACHINE, r"Software\Microsoft\Windows\CurrentVersion\Run")
@@ -1281,7 +1091,6 @@ CPU: {process.cpu_percent()}%
                         pass
             except:
                 pass
-        # Для Linux
         else:
             try:
                 autostart_dirs = [
@@ -1307,7 +1116,6 @@ CPU: {process.cpu_percent()}%
             messagebox.showwarning("Внимание", "Выберите программу для включения")
             return
 
-        # Реализация включения автозагрузки
         messagebox.showinfo("Инфо", "Функция включения автозагрузки в разработке")
 
     def disable_startup(self):
@@ -1316,7 +1124,6 @@ CPU: {process.cpu_percent()}%
             messagebox.showwarning("Внимание", "Выберите программу для отключения")
             return
 
-        # Реализация отключения автозагрузки
         messagebox.showinfo("Инфо", "Функция отключения автозагрузки в разработке")
 
     def clean_temp_files(self):
@@ -1359,7 +1166,7 @@ CPU: {process.cpu_percent()}%
 
     def clean_recycle_bin(self):
         try:
-            if os.name == 'nt':  # Windows
+            if os.name == 'nt':
                 import winshell
                 winshell.recycle_bin().empty(confirm=False)
                 messagebox.showinfo("Успех", "Корзина очищена")
@@ -1409,11 +1216,10 @@ CPU: {process.cpu_percent()}%
                     for file in files:
                         try:
                             filepath = os.path.join(root, file)
-                            if os.path.getsize(filepath) > 100 * 1024 * 1024:  # >100 MB
+                            if os.path.getsize(filepath) > 100 * 1024 * 1024:
                                 large_files += f"  {filepath} - {os.path.getsize(filepath) // 1024 // 1024} MB\n"
                         except:
                             continue
-                    # Ограничиваем глубину поиска для скорости
                     if len(large_files.split('\n')) > 50:
                         break
 
@@ -1427,7 +1233,6 @@ CPU: {process.cpu_percent()}%
 
     def clear_history(self):
         try:
-            # Очистка истории браузеров (упрощенная реализация)
             history_dirs = []
 
             if os.name == 'nt':
@@ -1472,7 +1277,6 @@ CPU: {process.cpu_percent()}%
         self.status_var.set("✅ Все данные обновлены")
 
     def show_resource(self, resource):
-        # Показываем вкладку с соответствующим ресурсом
         tabs = {
             "CPU": 0,
             "Memory": 0,
@@ -1485,14 +1289,13 @@ CPU: {process.cpu_percent()}%
             notebook.select(tabs[resource])
 
     def show_about(self):
-        """Показать информацию о программе"""
         about_text = f"""
         System Monitoring Tool v2.0
 
         Тема: {'Темная' if self.theme_mode == 'dark' else 'Светлая'}
         Стиль кнопок: {self.button_style}
 
-        🚀 Мощный мониторинг системы с современным интерфейсом
+        Мощный мониторинг системы с современным интерфейсом
         """
         messagebox.showinfo("О программе", about_text)
 
@@ -1506,7 +1309,6 @@ def main():
     app = SystemMonitor(root)
     root.protocol("WM_DELETE_WINDOW", app.on_closing)
 
-    # Центрирование окна
     root.update_idletasks()
     width = root.winfo_width()
     height = root.winfo_height()
